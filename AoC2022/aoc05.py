@@ -1,36 +1,32 @@
 import re
-demo = False
+filename = 'aoc05.txt'
 
-# Will need to hand code the input for most of it, parsing looks difficult
+f = open(filename,'rt')
+raw_input = []
+for line in f:
+    raw_input += [line[:-1]]
+f.close()
+# Get number of stacks
+num_of_stacks = int((len(raw_input[0]) + 1) / 4)
+row_counter = 0
 stacks = {}
-# demo
-if demo == True:
-    f = open('test_aoc05.txt','rt')
-    raw_input = []
-    for line in f:
-        raw_input += [line[:-1]]
-    f.close()    
-    stacks['1'] = ['Z','N']
-    stacks['2'] = ['M','C','D']
-    stacks['3'] = ['P']
-else:
-    f = open('aoc05.txt','rt')
-    raw_input = []
-    for line in f:
-        raw_input += [line[:-1]]
-    f.close()    
-    stacks['1'] = ['C','Z','N','B','M','W','Q','V']
-    stacks['2'] = ['H','Z','R','W','C','B']
-    stacks['3'] = ['F','Q','R','J']
-    stacks['4'] = ['Z','S','W','H','F','N','M','T']
-    stacks['5'] = ['G','F','W','L','N','Q','P']
-    stacks['6'] = ['L','P','W']
-    stacks['7'] = ['V','B','D','R','G','C','Q','J']
-    stacks['8'] = ['Z','Q','N','B','W']
-    stacks['9'] = ['H','L','F','C','G','T','J']
+for x in range(num_of_stacks):
+    stacks[str(x + 1)] = []
 for line in raw_input:
-    moves = re.findall(r'\d+',line)
-    from_stack= stacks[moves[1]]
+    if '[' in line:
+        for x in range(num_of_stacks):
+            current_char = line[(x * 4) + 1]
+            if current_char != ' ':
+                stacks[str(x + 1)].insert(0, current_char)
+        row_counter += 1
+    else:
+        break
+print()
+top_crates = ''
+begin_instructions = row_counter + 2
+for line in raw_input[begin_instructions:]:
+    moves = re.findall(r'\d+', line)
+    from_stack = stacks[moves[1]]
     to_stack = stacks[moves[2]]
     number = int(moves[0])
     for item in range(number):
@@ -40,32 +36,33 @@ for x in range(len(stacks)):
     index = str(x + 1)
     top_crates += stacks[index][-1]
 print('Part 1: the top crates are ' + top_crates)
+
+
 # Part 2
-if demo == True:
-    f = open('test_aoc05.txt','rt')
-    raw_input = []
-    for line in f:
-        raw_input += [line[:-1]]
-    f.close()    
-    stacks['1'] = ['Z','N']
-    stacks['2'] = ['M','C','D']
-    stacks['3'] = ['P']
-else:
-    f = open('aoc05.txt','rt')
-    raw_input = []
-    for line in f:
-        raw_input += [line[:-1]]
-    f.close()    
-    stacks['1'] = ['C','Z','N','B','M','W','Q','V']
-    stacks['2'] = ['H','Z','R','W','C','B']
-    stacks['3'] = ['F','Q','R','J']
-    stacks['4'] = ['Z','S','W','H','F','N','M','T']
-    stacks['5'] = ['G','F','W','L','N','Q','P']
-    stacks['6'] = ['L','P','W']
-    stacks['7'] = ['V','B','D','R','G','C','Q','J']
-    stacks['8'] = ['Z','Q','N','B','W']
-    stacks['9'] = ['H','L','F','C','G','T','J']
+f = open(filename,'rt')
+raw_input = []
+for line in f:
+    raw_input += [line[:-1]]
+f.close()
+# Get number of stacks
+num_of_stacks = int((len(raw_input[0]) + 1) / 4)
+row_counter = 0
+stacks = {}
+for x in range(num_of_stacks):
+    stacks[str(x + 1)] = []
 for line in raw_input:
+    if '[' in line:
+        for x in range(num_of_stacks):
+            current_char = line[(x * 4) + 1]
+            if current_char != ' ':
+                stacks[str(x + 1)].insert(0, current_char)
+        row_counter += 1
+    else:
+        break
+print()
+top_crates = ''
+begin_instructions = row_counter + 2
+for line in raw_input[begin_instructions:]:
     moves = re.findall(r'\d+',line)
     from_stack= stacks[moves[1]]
     to_stack = stacks[moves[2]]
