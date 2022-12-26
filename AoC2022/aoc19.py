@@ -1,8 +1,9 @@
 from parse import *
+import numpy as np
 import cvxpy as cp
 
 blueprints = []
-f = open('test_aoc19.txt','rt')
+f = open('aoc19.txt','rt')
 for line in f:
     line = line[:-1]
     result = parse('Blueprint {bp}: Each ore robot costs {oreorecost} ore. Each clay robot costs {clayorecost} ore. Each obsidian robot costs {obsorecost} ore and {obsclaycost} clay. Each geode robot costs {geoorecost} ore and {geoobscost} obsidian.', line)
@@ -13,13 +14,9 @@ for line in f:
     blueprint['geode'] = {'ore':int(result['geoorecost']), 'obsidian':int(result['geoobscost'])}
 
     blueprints += [blueprint]
-    print()
 def max_geode(blueprint, minutes):
-    materials_cost = [
-        [blueprint['ore']['ore'], blueprint['clay']['ore'], blueprint['obsidian']['ore'], blueprint['geode']['ore']],
-        [0, 0, blueprint['obsidian']['clay'],0],
-        [0,0,0,blueprint['geode']['obsidian']],
-        [0,0,0,0]]
+    materials_cost = np.array([[blueprint['ore']['ore'], blueprint['clay']['ore'], blueprint['obsidian']['ore'], blueprint['geode']['ore']],[0, 0, blueprint['obsidian']['clay'],0],[0,0,0,blueprint['geode']['obsidian']],[0,0,0,0]])
+    
     material_vars = []
     robot_vars = []
     produced_vars = []
@@ -48,7 +45,28 @@ def max_geode(blueprint, minutes):
     problem.solve()
     return problem.value
 
+blueprint_geodes = []
 for idx, blueprint in enumerate(blueprints):
     max_geodes = max_geode(blueprint, 24)
-    print()
+    blueprint_geodes += [int(max_geodes)]
+
+# find the quality levels
+quality_levels = []
+for x in range(len(blueprint_geodes)):
+    quality_levels += [(x + 1) * blueprint_geodes[x]]
+print('Part 1: sum of all quality levels is ' + str(sum(quality_levels)))
+
+# Part 2
+new_blueprints = blueprints[:3]
+
+blueprint_geodes = []
+for blueprint in new_blueprints:
+    max_geodes = max_geode(blueprint, 32)
+    blueprint_geodes += [int(max_geodes)]
+
+answer = 1
+for x in blueprint_geodes:
+    answer *= x
+print(blueprint_geodes)
+print('Part 2: multiplying the max geodes of the first three geodes yields ' + str(answer))
 
